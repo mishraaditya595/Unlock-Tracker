@@ -4,7 +4,9 @@ plugins {
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs.kotlin'
 }
-
+def properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def googleMapApiKey = properties.getProperty('google.map.key')
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"

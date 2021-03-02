@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Unlock Tracker</string>
+    <string name="google_maps_api_key"></string>
 </resources>
