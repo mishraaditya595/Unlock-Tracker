@@ -49,6 +49,7 @@
 
         <fragment
             android:id="@+id/navHostFragment"
+            android:tag="nav_host_frag"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:name="androidx.navigation.fragment.NavHostFragment"
