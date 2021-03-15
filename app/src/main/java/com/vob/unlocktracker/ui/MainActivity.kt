@@ -1,6 +1,7 @@
 package com.vob.unlocktracker.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.vob.unlocktracker.R
 import com.vob.unlocktracker.databinding.ActivityMainBinding
 import com.vob.unlocktracker.db.RunDAO
+import com.vob.unlocktracker.util.Constants.ACTION_SHOW_TRACKING_FRAGMENT
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -18,13 +20,16 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    lateinit var navHostFragment: NavHostFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navHostFragment = supportFragmentManager.findFragmentByTag("nav_host_frag") as NavHostFragment
+        navHostFragment = supportFragmentManager.findFragmentByTag("nav_host_frag") as NavHostFragment
+
+        navigateToTrackingFragment(intent)
 
         //setSupportActionBar(binding.toolbar)
         binding.bottomNavigationView.setupWithNavController(navHostFragment.findNavController())
@@ -38,7 +43,20 @@ class MainActivity : AppCompatActivity() {
                         else -> binding.bottomNavigationView.visibility = View.GONE
                     }
                 }
-
-
     }
+
+    private fun navigateToTrackingFragment(intent: Intent?) {
+        if (intent?.action == ACTION_SHOW_TRACKING_FRAGMENT)
+        {
+            navHostFragment.findNavController().navigate(R.id.action_global_tracking_fragment)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        //in case the main activity gets destroyed
+        navigateToTrackingFragment(intent)
+    }
+
+
 }
