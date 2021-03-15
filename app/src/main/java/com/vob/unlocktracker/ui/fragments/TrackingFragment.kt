@@ -1,5 +1,6 @@
 package com.vob.unlocktracker.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -7,7 +8,9 @@ import androidx.fragment.app.viewModels
 import com.google.android.gms.maps.GoogleMap
 import com.vob.unlocktracker.R
 import com.vob.unlocktracker.databinding.FragmentTrackingBinding
+import com.vob.unlocktracker.service.TrackingService
 import com.vob.unlocktracker.ui.viewmodel.MainViewModel
+import com.vob.unlocktracker.util.Constants.ACTION_START_OR_RESUME_SERVICE
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,10 +27,20 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         binding = FragmentTrackingBinding.bind(view)
         binding.mapView.onCreate(savedInstanceState)
 
+        binding.btnToggleRun.setOnClickListener {
+            sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
+        }
+
         binding.mapView.getMapAsync{
             map = it
         }
     }
+
+    private fun sendCommandToService(action: String) =
+            Intent(requireContext(), TrackingService::class.java).also {
+                it.action = action
+                requireContext().startService(it)
+            }
 
     override fun onResume() {
         super.onResume()
