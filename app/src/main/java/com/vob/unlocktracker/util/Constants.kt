@@ -1,5 +1,8 @@
 package com.vob.unlocktracker.util
 
+import android.graphics.Color
+import com.vob.unlocktracker.service.Polyline
+
 object Constants {
     const val RUNNING_DATABASE_NAME = "running_db"
     const val REQUEST_CODE_LOCATION_PERMISSIONS = 1000
@@ -12,4 +15,7 @@ object Constants {
     const val ACTION_SHOW_TRACKING_FRAGMENT = "ACTION_SHOW_TRACKING_FRAGMENT"
     const val LOCATION_UPDATE_INTERVAL = 5000L
     const val FASTEST_LOCATION_INTERVAL = 2500L
+    const val POLYLINE_COLOR = Color.RED
+    const val POLYLINE_WIDTH = 8f
+    const val MAP_ZOOM = 15f
 }

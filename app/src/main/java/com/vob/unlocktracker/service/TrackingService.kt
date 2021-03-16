@@ -75,10 +75,14 @@ class TrackingService: LifecycleService() {
                         isFirstRun = false
                     }
                     else
+                    {
                         Timber.d("Resuming service")
+                        startForegroundService()
+                    }
                 }
                 ACTION_PAUSE_SERVICE ->
                 {
+                    pauseService()
                     Timber.d("Service paused")
                 }
                 ACTION_STOP_SERVICE ->
@@ -147,9 +151,15 @@ class TrackingService: LifecycleService() {
         pathPoints.postValue(this)
     } ?: pathPoints.postValue(mutableListOf(mutableListOf()))
 
+    private fun pauseService() {
+        isTracking.postValue(false)
+    }
+
+
     private fun startForegroundService() {
         addEmptyPolyLines()
         isTracking.postValue(true)
+
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
