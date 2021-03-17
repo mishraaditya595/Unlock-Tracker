@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
         navHostFragment = supportFragmentManager.findFragmentByTag("nav_host_frag") as NavHostFragment
 
         navigateToTrackingFragment(intent)

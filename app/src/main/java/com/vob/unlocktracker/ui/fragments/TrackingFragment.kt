@@ -52,6 +52,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         binding = FragmentTrackingBinding.bind(view)
         binding.mapView.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        binding.btnFinishRun.visibility = View.GONE
         binding.btnToggleRun.setOnClickListener {
             toggleRun()
         }
