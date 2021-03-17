@@ -19,6 +19,7 @@ import com.vob.unlocktracker.util.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.vob.unlocktracker.util.Constants.MAP_ZOOM
 import com.vob.unlocktracker.util.Constants.POLYLINE_COLOR
 import com.vob.unlocktracker.util.Constants.POLYLINE_WIDTH
+import com.vob.unlocktracker.util.TrackingUtility
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,6 +30,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
     private var map: GoogleMap? = null
     private var isTracking = false
     private var pathPoints = mutableListOf<Polyline>()
+    private var currentTimeMillis = 0L
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,6 +58,12 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
             pathPoints = it
             addLatestPolyline()
             moveCameraAsPerUserPosition()
+        })
+
+        TrackingService.timeRunInMillis.observe(viewLifecycleOwner, Observer {
+            currentTimeMillis = it
+            val formattedTime = TrackingUtility.getFormattedStopWatchTime(currentTimeMillis, true)
+            binding.tvTimer.text = formattedTime
         })
     }
 
