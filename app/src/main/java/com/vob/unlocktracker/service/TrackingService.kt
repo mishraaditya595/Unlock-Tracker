@@ -23,9 +23,7 @@ import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
 import com.vob.unlocktracker.R
-import com.vob.unlocktracker.ui.MainActivity
 import com.vob.unlocktracker.util.Constants.ACTION_PAUSE_SERVICE
-import com.vob.unlocktracker.util.Constants.ACTION_SHOW_TRACKING_FRAGMENT
 import com.vob.unlocktracker.util.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.vob.unlocktracker.util.Constants.ACTION_STOP_SERVICE
 import com.vob.unlocktracker.util.Constants.FASTEST_LOCATION_INTERVAL
@@ -55,6 +53,7 @@ class TrackingService: LifecycleService() {
     private val timeRunInSeconds = MutableLiveData<Long>()
     @Inject
     lateinit var baseNotificationBuilder: NotificationCompat.Builder
+    lateinit var currentNotificationBuilder: NotificationCompat.Builder
 
     companion object {
         val timeRunInMillis = MutableLiveData<Long>()
@@ -71,10 +70,12 @@ class TrackingService: LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
+        currentNotificationBuilder = baseNotificationBuilder
         postInitialValues()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
         isTracking.observe(this, Observer {
             updateLocationTracking(it)
+            updateNotificationTrackingState(it)
         })
     }
 
@@ -141,6 +142,35 @@ class TrackingService: LifecycleService() {
             }
             timeRun += lapTime
         }
+    }
+
+    private fun updateNotificationTrackingState(isTracking: Boolean) {
+        val notificationActionText = if (isTracking) "Pause" else "Resume"
+        val pendingIntent = if (isTracking) {
+            val pauseIntent = Intent(this, TrackingService::class.java).apply {
+                action = ACTION_PAUSE_SERVICE
+            }
+            PendingIntent.getService(this, 1, pauseIntent, FLAG_UPDATE_CURRENT)
+        }
+        else
+        {
+            val resumeIntent =  Intent(this, TrackingService::class.java).apply {
+                action = ACTION_START_OR_RESUME_SERVICE
+            }
+            PendingIntent.getService(this, 2, resumeIntent, FLAG_UPDATE_CURRENT)
+        }
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        //to remove all actions already present in our notification
+        currentNotificationBuilder.javaClass.getDeclaredField("mActions").apply {
+            isAccessible = true
+            set(currentNotificationBuilder, ArrayList<NotificationCompat.Action>())
+        }
+
+        currentNotificationBuilder = baseNotificationBuilder
+                .addAction(R.drawable.ic_pause, notificationActionText, pendingIntent)
+        notificationManager.notify(NOTIFICATION_ID, currentNotificationBuilder.build())
     }
 
     @SuppressLint("MissingPermission")
@@ -216,8 +246,13 @@ class TrackingService: LifecycleService() {
             createNotificationChannel(notificationManager)
         }
 
-
         startForeground(NOTIFICATION_ID, baseNotificationBuilder.build())
+
+        timeRunInSeconds.observe(this, Observer {
+            val notification = currentNotificationBuilder
+                    .setContentText(TrackingUtility.getFormattedStopWatchTime(it * 1000))
+            notificationManager.notify(NOTIFICATION_ID, notification.build())
+        })
     }
 
 
