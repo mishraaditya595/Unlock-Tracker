@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.UnlockTracker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.UnlockTracker" parent="Theme.MaterialComponents.DayNight">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/md_blue_900</item>
         <item name="colorPrimaryVariant">@color/white</item>
