@@ -35,20 +35,26 @@ import com.vob.unlocktracker.util.Constants.NOTIFICATION_CHANNEL_NAME
 import com.vob.unlocktracker.util.Constants.NOTIFICATION_ID
 import com.vob.unlocktracker.util.Constants.TIMER_UPDATE_INTERVAL
 import com.vob.unlocktracker.util.TrackingUtility
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 typealias Polyline = MutableList<LatLng>
 typealias Polylines = MutableList<Polyline>
 
+@AndroidEntryPoint
 class TrackingService: LifecycleService() {
 
     var isFirstRun = true
+    @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val timeRunInSeconds = MutableLiveData<Long>()
+    @Inject
+    lateinit var baseNotificationBuilder: NotificationCompat.Builder
 
     companion object {
         val timeRunInMillis = MutableLiveData<Long>()
@@ -210,25 +216,10 @@ class TrackingService: LifecycleService() {
             createNotificationChannel(notificationManager)
         }
 
-        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                .setAutoCancel(false)
-                .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_run)
-                .setContentTitle(R.string.app_name.toString())
-                .setContentText("00:00:00")
-                .setContentIntent(getMainActivityPendingIntent())
 
-        startForeground(NOTIFICATION_ID, notificationBuilder.build())
+        startForeground(NOTIFICATION_ID, baseNotificationBuilder.build())
     }
 
-    private fun getMainActivityPendingIntent() = PendingIntent.getActivity(
-            this,
-            0,
-            Intent(this, MainActivity::class.java).also {
-                it.action = ACTION_SHOW_TRACKING_FRAGMENT
-            },
-            FLAG_UPDATE_CURRENT
-    )
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(notificationManager: NotificationManager) {
