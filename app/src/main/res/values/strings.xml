@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Unlock Tracker</string>
-    <string name="google_maps_api_key" />
+    <string-array name="filter_options">
+        <item>Date</item>
+        <item>Running Time</item>
+        <item>Distance</item>
+        <item>Average Speed</item>
+        <item>Calories Burned</item>
+    </string-array>
 </resources>
