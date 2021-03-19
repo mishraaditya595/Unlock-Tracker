@@ -62,7 +62,7 @@ class SetupFragment : Fragment(R.layout.fragment_setup) {
         val name = binding.etName.text.toString()
         val weight = binding.etWeight.text.toString()
 
-        if (name.isNullOrEmpty() || weight.isNullOrEmpty())
+        if (name.isEmpty() || weight.isEmpty())
             return false
 
         sharedPreferences.edit()
