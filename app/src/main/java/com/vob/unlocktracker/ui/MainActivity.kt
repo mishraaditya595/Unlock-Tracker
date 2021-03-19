@@ -1,17 +1,14 @@
 package com.vob.unlocktracker.ui
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.vob.unlocktracker.R
 import com.vob.unlocktracker.databinding.ActivityMainBinding
-import com.vob.unlocktracker.db.RunDAO
 import com.vob.unlocktracker.util.Constants.ACTION_SHOW_TRACKING_FRAGMENT
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -21,6 +18,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     lateinit var navHostFragment: NavHostFragment
+    @set:Inject
+    var name = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +27,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+        binding.toolbar.title = "Let's go, $name"
+
         navHostFragment = supportFragmentManager.findFragmentByTag("nav_host_frag") as NavHostFragment
 
         navigateToTrackingFragment(intent)
